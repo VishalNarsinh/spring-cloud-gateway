@@ -1,0 +1,81 @@
+services:
+  configserver:
+    image: "vishalnarsinh/configserver:s8"
+    container_name: "configserver-ms" # configserver-microservice
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: "curl -f http://localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  eurekaserver:
+    image: "vishalnarsinh/eurekaserver:s8"
+    container_name: "eurekaserver-ms" # eurekaserver-microservice
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl -f http://localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+
+  accounts:
+    image: "vishalnarsinh/accounts:s8"
+    container_name: "account-ms" # account-microservice
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  loans:
+    image: "vishalnarsinh/loans:s8"
+    container_name: "loans-ms" # loans-microservice
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+
+  loans1:
+    image: "vishalnarsinh/loans:s8"
+    container_name: "loans-ms1" # loans-microservice
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  cards:
+    image: "vishalnarsinh/cards:s8"
+    container_name: "cards-ms" # cards-microservice
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+networks:
+  vishalnarsinh:
+    driver: "bridge"
