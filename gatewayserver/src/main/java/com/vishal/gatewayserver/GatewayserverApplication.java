@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @SpringBootApplication
 public class GatewayserverApplication {
 
+	public static final String X_RESPONSE_TIME = "X-Response-Time";
+	public static final String SEGMENT = "/${segment}";
+
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayserverApplication.class, args);
 	}
@@ -21,24 +24,24 @@ public class GatewayserverApplication {
 				.route(p -> p
 						.path("/custom/accounts/**")
 						.filters(f -> f
-								.rewritePath("/custom/accounts/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.rewritePath("/custom/accounts/(?<segment>.*)", SEGMENT)
+								.addResponseHeader(X_RESPONSE_TIME, LocalDateTime.now().toString())
 						)
 						.uri("lb://ACCOUNTS"))
 
 				.route(p -> p
 						.path("/custom/cards/**")
 						.filters(f -> f
-								.rewritePath("/custom/cards/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.rewritePath("/custom/cards/(?<segment>.*)", SEGMENT)
+								.addResponseHeader(X_RESPONSE_TIME, LocalDateTime.now().toString())
 						)
 						.uri("lb://CARDS"))
 
 				.route(p -> p
 						.path("/custom/loans/**")
 						.filters(f -> f
-								.rewritePath("/custom/loans/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.rewritePath("/custom/loans/(?<segment>.*)", SEGMENT)
+								.addResponseHeader(X_RESPONSE_TIME, LocalDateTime.now().toString())
 						)
 						.uri("lb://LOANS"))
 				.build();
